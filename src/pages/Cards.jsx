@@ -235,9 +235,13 @@ function Cards() {
           { value: "normal", label: "Normal" },
         ],
       },
+      // {
+      //   name: "image",
+      //   type: "text",
+      // },
       {
         name: "image",
-        type: "text",
+        type: "file", // Change type to "file"
       },
       {
         name: "grade",
