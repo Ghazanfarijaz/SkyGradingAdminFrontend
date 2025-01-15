@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
-const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
 const apiSlice = createApi({
   reducerPath: "api",
@@ -59,7 +59,9 @@ const apiSlice = createApi({
     }),
     getCardByUserId: builder.query({
       query: (userId) => `/cards/user/${userId}`,
-      providesTags: (result, error, arg) => [{ type: "Cards", id: `User-${arg}` }],
+      providesTags: (result, error, arg) => [
+        { type: "Cards", id: `User-${arg}` },
+      ],
     }),
     getCardByUserIdAndCardNumber: builder.query({
       query: ({ userId, cardNumber }) => `/cards/user/${userId}/${cardNumber}`,
@@ -72,12 +74,12 @@ const apiSlice = createApi({
       query: () => "/users/users", // API endpoint to fetch all users
       providesTags: ["User"], // Define tags for cache management
     }),
-   // Add new endpoint to fetch all users
+    // Add new endpoint to fetch all users
     getAllCards: builder.query({
       query: () => "/cards", // API endpoint to fetch all users
       providesTags: ["Cards"], // Define tags for cache management
     }),
-        // Update card details
+    // Update card details
     updateCard: builder.mutation({
       query: ({ cardNumber, cardData }) => ({
         url: `/cards/updateall/${cardNumber}`,
@@ -86,6 +88,16 @@ const apiSlice = createApi({
       }),
       // After updating the card, invalidate relevant cache to refetch updated data
       // invalidatesTags: (result, error, { cardNumber }) => [{ type: "Cards", id: cardNumber }],
+      invalidatesTags: ["Cards"], // Invalidate the User tag after a successful update
+    }),
+    // Update a user by ID
+    updateUser: builder.mutation({
+      query: ({ id, ...userData }) => ({
+        url: `/users/users/${id}`,
+        method: "PUT",
+        body: userData,
+      }),
+      invalidatesTags: ["User"], // Invalidate the User tag after a successful update
     }),
   }),
 });
@@ -100,7 +112,8 @@ export const {
   useGetCardByUserIdAndCardNumberQuery,
   useGetAllUsersQuery, // Expose the new hook for use in your components
   useGetAllCardsQuery,
-  useUpdateCardMutation
+  useUpdateCardMutation,
+  useUpdateUserMutation,
 } = apiSlice;
 
 export default apiSlice;

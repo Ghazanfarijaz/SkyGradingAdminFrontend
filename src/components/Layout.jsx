@@ -40,7 +40,7 @@ function Layout() {
     { text: 'Dashboard', icon: <DashboardIcon />, path: '/' },
     { text: 'Cards', icon: <CreditCardIcon />, path: '/cards' },
     { text: 'Users', icon: <PeopleIcon />, path: '/users' },
-    { text: 'Profile', icon: <PersonIcon />, path: '/profile' },
+    // { text: 'Profile', icon: <PersonIcon />, path: '/profile' },
   ];
 
   const handleDrawerToggle = () => {
