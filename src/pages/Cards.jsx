@@ -545,9 +545,8 @@
 
 // export default Cards;
 
-
-
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { QRCode } from "react-qr-code"; // For QR code generation
 import {
   Paper,
   Table,
@@ -568,7 +567,7 @@ import {
   MenuItem,
   Rating,
 } from "@mui/material";
-import { Edit as EditIcon, Delete as DeleteIcon } from "@mui/icons-material";
+import { Edit as EditIcon, Delete as DeleteIcon, Visibility as VisibilityIcon, GetApp as GetAppIcon } from "@mui/icons-material";
 import { useGetAllCardsQuery, useUpdateCardMutation } from "../api/apiSlice";
 
 function Cards() {
@@ -576,11 +575,13 @@ function Cards() {
   const [updateCard] = useUpdateCardMutation();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const [open, setOpen] = useState(false);
+  const [openEditModal, setOpenEditModal] = useState(false);
   const [selectedCard, setSelectedCard] = useState(null);
   const [imageFile, setImageFile] = useState(null); // State to store the selected image file
+  const [openQRModal, setOpenQRModal] = useState(false); // State for QR modal
+  const [qrCardNumber, setQRCardNumber] = useState(""); // State to store the card number for QR code
 
-  console.log("cards" , cards)
+  console.log("cards", cards);
 
   // Handle pagination change
   const handleChangePage = (event, newPage) => {
@@ -593,17 +594,29 @@ function Cards() {
     setPage(0);
   };
 
-  // Handle modal open
-  const handleOpen = (card) => {
+  // Handle edit modal open
+  const handleOpenEditModal = (card) => {
     setSelectedCard({ ...card });
-    setOpen(true);
+    setOpenEditModal(true);
   };
 
-  // Handle modal close
-  const handleClose = () => {
-    setOpen(false);
+  // Handle edit modal close
+  const handleCloseEditModal = () => {
+    setOpenEditModal(false);
     setSelectedCard(null);
     setImageFile(null); // Reset the image file state
+  };
+
+  // Handle QR modal open
+  const handleOpenQRModal = (cardNumber) => {
+    setQRCardNumber(cardNumber);
+    setOpenQRModal(true);
+  };
+
+  // Handle QR modal close
+  const handleCloseQRModal = () => {
+    setOpenQRModal(false);
+    setQRCardNumber("");
   };
 
   // Handle form field changes
@@ -657,9 +670,25 @@ function Cards() {
     const { cardNumber, ...cardData } = selectedCard;
     try {
       await updateCard({ cardNumber, cardData }).unwrap();
-      handleClose(); // Close the modal on successful update
+      handleCloseEditModal(); // Close the modal on successful update
     } catch (error) {
       console.error("Error updating card:", error);
+    }
+  };
+
+  // Handle downloading QR code
+  const handleDownloadQR = () => {
+    const svg = document.getElementById("qr-code-svg");
+    if (svg) {
+      const svgData = new XMLSerializer().serializeToString(svg);
+      const blob = new Blob([svgData], { type: "image/svg+xml" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `QR_${qrCardNumber}.svg`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     }
   };
 
@@ -704,6 +733,8 @@ function Cards() {
                 <TableCell>Rating</TableCell>
                 <TableCell>Tracking ID</TableCell>
                 <TableCell>User ID</TableCell>
+                <TableCell>QR View</TableCell>
+                <TableCell>Download QR</TableCell>
                 <TableCell>Actions</TableCell>
               </TableRow>
             </TableHead>
@@ -732,7 +763,17 @@ function Cards() {
                     <TableCell>{card.trackingID}</TableCell>
                     <TableCell>{card.userId}</TableCell>
                     <TableCell>
-                      <IconButton size="small" onClick={() => handleOpen(card)}>
+                      <IconButton onClick={() => handleOpenQRModal(card.cardNumber)}>
+                        <VisibilityIcon />
+                      </IconButton>
+                    </TableCell>
+                    <TableCell>
+                      <IconButton onClick={() => handleOpenQRModal(card.cardNumber)}>
+                        <GetAppIcon />
+                      </IconButton>
+                    </TableCell>
+                    <TableCell>
+                      <IconButton size="small" onClick={() => handleOpenEditModal(card)}>
                         <EditIcon />
                       </IconButton>
                       <IconButton size="small" color="error">
@@ -755,8 +796,24 @@ function Cards() {
         />
       </Paper>
 
+      {/* QR Code Modal */}
+      <Dialog open={openQRModal} onClose={handleCloseQRModal}>
+        <DialogTitle>QR Code for Card Number: {qrCardNumber}</DialogTitle>
+        <DialogContent>
+          <QRCode id="qr-code-svg" value={qrCardNumber} size={256} />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDownloadQR} color="primary">
+            Download QR
+          </Button>
+          <Button onClick={handleCloseQRModal} color="secondary">
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
+
       {/* Edit Modal */}
-      <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
+      <Dialog open={openEditModal} onClose={handleCloseEditModal} fullWidth maxWidth="sm">
         <DialogTitle>Edit Card</DialogTitle>
         <DialogContent>
           {/* Existing Fields */}
@@ -823,9 +880,10 @@ function Cards() {
               name: "trackingStatus",
               type: "menu",
               options: [
-                { value: "pending", label: "Pending" },
-                { value: "completed", label: "Completed" },
-                { value: "inprogress", label: "In Progress" },
+                { value: "confirmed", label: "Order Confirmed" },
+                { value: "shipped", label: "Shipped" },
+                { value: "checking", label: "Checking" },
+                { value: "delivered", label: "Delivered" },
               ],
             },
             {
@@ -953,7 +1011,7 @@ function Cards() {
           ))}
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose} color="secondary">
+          <Button onClick={handleCloseEditModal} color="secondary">
             Cancel
           </Button>
           <Button onClick={handleSave} color="primary">

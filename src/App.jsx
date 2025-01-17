@@ -33,15 +33,20 @@ function App() {
       <AuthProvider>
         <BrowserRouter>
           <Routes>
+            {/* Public route for sign-in */}
             <Route path="/signin" element={<SignIn />} />
-            {/* <Route element={<PrivateRoute />}> */}
-              <Route path="/" element={<Layout   />}>
+
+            {/* Protected routes */}
+            <Route element={<PrivateRoute />}>
+              <Route path="/" element={<Layout />}>
                 <Route index element={<Dashboard />} />
                 <Route path="cards" element={<Cards />} />
                 <Route path="users" element={<Users />} />
                 <Route path="profile" element={<Profile />} />
               </Route>
-            {/* </Route> */}
+            </Route>
+
+            {/* Redirect all other paths to /signin */}
             <Route path="*" element={<Navigate to="/signin" replace />} />
           </Routes>
         </BrowserRouter>
