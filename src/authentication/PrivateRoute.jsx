@@ -2,10 +2,12 @@ import { useAuth } from './authProvider';
 import { Navigate, Outlet } from 'react-router-dom';
 
 const PrivateRoute = () => {
-  const { isAuthenticated } = useAuth(); // Assuming `useAuth` provides `isAuthenticated`
+  const { isAuthenticated, loading } = useAuth();
 
-  // If authenticated, render the child routes (Outlet)
-  // Otherwise, redirect to /signin
+  if (loading) {
+    return <div>Loading...</div>; // Show a loading spinner or placeholder
+  }
+
   return isAuthenticated ? <Outlet /> : <Navigate to="/signin" replace />;
 };
 

@@ -7,18 +7,43 @@ import {
   Typography,
   Container,
   Alert,
+  Paper,
+  CssBaseline,
+  Grid,
+  Link,
 } from '@mui/material';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from './../authentication/authProvider';
+import { useLoginUserMutation } from '../api/apiSlice';
 
-import { useNavigate } from "react-router-dom";
-import { useAuth } from './../authentication/authProvider'; // Adjust path to your AuthProvider
-import { useLoginUserMutation } from "../api/apiSlice"; // Your API call hook
+// Create a custom theme
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: '#1976d2', // A modern blue
+    },
+    secondary: {
+      main: '#dc004e', // A vibrant pink
+    },
+    background: {
+      default: '#f4f6f8', // Light gray background
+    },
+  },
+  typography: {
+    fontFamily: 'Roboto, sans-serif',
+    h5: {
+      fontWeight: 700,
+    },
+  },
+});
 
 export const SignIn = () => {
   const [error, setError] = useState('');
   const navigate = useNavigate();
-  const { login } = useAuth();  // Use the login function from AuthProvider
-  const [loginUser, { isLoading }] = useLoginUserMutation();  // API call hook to login the user
+  const { login } = useAuth();
+  const [loginUser, { isLoading }] = useLoginUserMutation();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -26,12 +51,17 @@ export const SignIn = () => {
     const email = data.get('email');
     const password = data.get('password');
 
-    // Make the API call to authenticate the user
     try {
       const response = await loginUser({ email, password }).unwrap();
       if (response) {
-        login(response.token);  // Assuming response contains a token or user data
-        navigate('/');  // Redirect to the homepage or dashboard
+        const { token, user } = response;
+
+        if (user.role === 'admin') {
+          login(user, token);
+          navigate('/');
+        } else {
+          setError('Access denied. Only admins can sign in.');
+        }
       }
     } catch (err) {
       setError('Invalid email or password');
@@ -39,58 +69,90 @@ export const SignIn = () => {
   };
 
   return (
-    <Container component="main" maxWidth="xs">
-      <Box
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <Container
+        component="main"
+        maxWidth="xs"
         sx={{
-          marginTop: 8,
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
+          justifyContent: 'center',
+          minHeight: '100vh',
         }}
       >
-        <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-          <LockOutlinedIcon />
-        </Avatar>
-        <Typography component="h1" variant="h5">
-          Sign in
-        </Typography>
-        {error && (
-          <Alert severity="error" sx={{ mt: 2, width: '100%' }}>
-            {error}
-          </Alert>
-        )}
-        <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
-          <TextField
-            margin="normal"
-            required
-            fullWidth
-            id="email"
-            label="Email Address"
-            name="email"
-            autoComplete="email"
-            autoFocus
-          />
-          <TextField
-            margin="normal"
-            required
-            fullWidth
-            name="password"
-            label="Password"
-            type="password"
-            id="password"
-            autoComplete="current-password"
-          />
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            sx={{ mt: 3, mb: 2 }}
-            disabled={isLoading}  // Disable the button if the request is loading
+        <Paper
+          elevation={6}
+          sx={{
+            padding: 4,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            borderRadius: 2,
+            backgroundColor: 'background.paper',
+          }}
+        >
+          <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+            <LockOutlinedIcon />
+          </Avatar>
+          <Typography component="h1" variant="h5" sx={{ fontWeight: 'bold' }}>
+            Admin Sign In
+          </Typography>
+          {error && (
+            <Alert severity="error" sx={{ mt: 2, width: '100%' }}>
+              {error}
+            </Alert>
+          )}
+          <Box
+            component="form"
+            onSubmit={handleSubmit}
+            noValidate
+            sx={{ mt: 3, width: '100%' }}
           >
-            Sign In
-          </Button>
-        </Box>
-      </Box>
-    </Container>
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              id="email"
+              label="Email Address"
+              name="email"
+              autoComplete="email"
+              autoFocus
+              variant="outlined"
+              sx={{ mb: 2 }}
+            />
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              name="password"
+              label="Password"
+              type="password"
+              id="password"
+              autoComplete="current-password"
+              variant="outlined"
+              sx={{ mb: 2 }}
+            />
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              sx={{ mt: 3, mb: 2, py: 1.5 }}
+              disabled={isLoading}
+            >
+              {isLoading ? 'Signing In...' : 'Sign In'}
+            </Button>
+            <Grid container justifyContent="flex-end">
+              <Grid item>
+                <Link href="#" variant="body2" sx={{ color: 'primary.main' }}>
+                  Hello Admin
+                </Link>
+              </Grid>
+            </Grid>
+          </Box>
+        </Paper>
+      </Container>
+    </ThemeProvider>
   );
 };
