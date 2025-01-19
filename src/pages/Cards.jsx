@@ -568,7 +568,7 @@ import {
   Rating,
 } from "@mui/material";
 import { Edit as EditIcon, Delete as DeleteIcon, Visibility as VisibilityIcon, GetApp as GetAppIcon } from "@mui/icons-material";
-import { useGetAllCardsQuery, useUpdateCardMutation } from "../api/apiSlice";
+import { useGetAllCardsQuery, useUpdateCardMutation, useDeleteCardMutation  } from "../api/apiSlice";
 
 function Cards() {
   const { data: cards, error, isLoading } = useGetAllCardsQuery();
@@ -580,6 +580,10 @@ function Cards() {
   const [imageFile, setImageFile] = useState(null); // State to store the selected image file
   const [openQRModal, setOpenQRModal] = useState(false); // State for QR modal
   const [qrCardNumber, setQRCardNumber] = useState(""); // State to store the card number for QR code
+
+  const [deleteCard] = useDeleteCardMutation();
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
+const [cardToDelete, setCardToDelete] = useState(null); // Store the card to delete
 
   console.log("cards", cards);
 
@@ -692,6 +696,16 @@ function Cards() {
     }
   };
 
+  const handleDeleteCard = async (cardNumber) => {
+    try {
+      await deleteCard(cardNumber).unwrap(); // Call the delete mutation
+      alert("Card deleted successfully!"); // Show success message
+    } catch (error) {
+      console.error("Failed to delete card:", error);
+      alert("Failed to delete card."); // Show error message
+    }
+  };
+
   // Handle loading and error states
   if (isLoading) {
     return <Typography variant="h6">Loading cards...</Typography>;
@@ -776,9 +790,16 @@ function Cards() {
                       <IconButton size="small" onClick={() => handleOpenEditModal(card)}>
                         <EditIcon />
                       </IconButton>
-                      <IconButton size="small" color="error">
-                        <DeleteIcon />
-                      </IconButton>
+                      <IconButton
+  size="small"
+  color="error"
+  onClick={() => {
+    setCardToDelete(card.cardNumber); // Set the card to delete
+    setOpenDeleteModal(true); // Open the confirmation modal
+  }}
+>
+  <DeleteIcon />
+</IconButton>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -1019,6 +1040,26 @@ function Cards() {
           </Button>
         </DialogActions>
       </Dialog>
+      <Dialog open={openDeleteModal} onClose={() => setOpenDeleteModal(false)}>
+  <DialogTitle>Confirm Delete</DialogTitle>
+  <DialogContent>
+    <Typography>Are you sure you want to delete this card?</Typography>
+  </DialogContent>
+  <DialogActions>
+    <Button onClick={() => setOpenDeleteModal(false)} color="secondary">
+      Cancel
+    </Button>
+    <Button
+      onClick={() => {
+        handleDeleteCard(cardToDelete); // Call the delete function
+        setOpenDeleteModal(false); // Close the modal
+      }}
+      color="error"
+    >
+      Delete
+    </Button>
+  </DialogActions>
+</Dialog>
     </div>
   );
 }

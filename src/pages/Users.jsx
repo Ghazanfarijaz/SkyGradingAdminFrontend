@@ -19,15 +19,22 @@ import {
   Button,
 } from '@mui/material';
 import { Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
-import { useGetAllUsersQuery, useUpdateUserMutation } from '../api/apiSlice'; // Import the update mutation
+import {
+  useGetAllUsersQuery,
+  useUpdateUserMutation,
+  useDeleteUserMutation, // Import the delete mutation
+} from '../api/apiSlice';
 
 function Users() {
   const { data: users, error, isLoading } = useGetAllUsersQuery(); // Fetching users from the API
   const [updateUser] = useUpdateUserMutation(); // Hook to update user
+  const [deleteUser] = useDeleteUserMutation(); // Hook to delete user
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const [openModal, setOpenModal] = useState(false); // State to control modal visibility
+  const [openModal, setOpenModal] = useState(false); // State to control edit modal visibility
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false); // State to control delete confirmation dialog
   const [selectedUser, setSelectedUser] = useState(null); // State to store the selected user's details
+  const [userToDelete, setUserToDelete] = useState(null); // State to store the user to delete
 
   // Handle pagination change
   const handleChangePage = (event, newPage) => {
@@ -40,16 +47,28 @@ function Users() {
     setPage(0);
   };
 
-  // Handle opening the modal and setting the selected user
+  // Handle opening the edit modal and setting the selected user
   const handleEditClick = (user) => {
     setSelectedUser(user); // Set the selected user's details
-    setOpenModal(true); // Open the modal
+    setOpenModal(true); // Open the edit modal
   };
 
-  // Handle closing the modal
+  // Handle closing the edit modal
   const handleCloseModal = () => {
     setOpenModal(false);
     setSelectedUser(null); // Reset the selected user
+  };
+
+  // Handle opening the delete confirmation dialog
+  const handleDeleteClick = (user) => {
+    setUserToDelete(user); // Set the user to delete
+    setOpenDeleteDialog(true); // Open the delete confirmation dialog
+  };
+
+  // Handle closing the delete confirmation dialog
+  const handleCloseDeleteDialog = () => {
+    setOpenDeleteDialog(false);
+    setUserToDelete(null); // Reset the user to delete
   };
 
   // Handle form field changes
@@ -58,7 +77,7 @@ function Users() {
     setSelectedUser({ ...selectedUser, [name]: value });
   };
 
-  // Handle form submission
+  // Handle form submission for editing a user
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -68,6 +87,18 @@ function Users() {
     } catch (error) {
       console.error('Failed to update user:', error);
       alert('Failed to update user.');
+    }
+  };
+
+  // Handle user deletion
+  const handleDeleteUser = async () => {
+    try {
+      await deleteUser(userToDelete.id).unwrap(); // Delete the user
+      alert('User deleted successfully!');
+      handleCloseDeleteDialog(); // Close the delete confirmation dialog
+    } catch (error) {
+      console.error('Failed to delete user:', error);
+      alert('Failed to delete user.');
     }
   };
 
@@ -116,7 +147,11 @@ function Users() {
                       <IconButton size="small" onClick={() => handleEditClick(user)}>
                         <EditIcon />
                       </IconButton>
-                      <IconButton size="small" color="error">
+                      <IconButton
+                        size="small"
+                        color="error"
+                        onClick={() => handleDeleteClick(user)}
+                      >
                         <DeleteIcon />
                       </IconButton>
                     </TableCell>
@@ -203,6 +238,22 @@ function Users() {
             </DialogActions>
           </form>
         </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={openDeleteDialog} onClose={handleCloseDeleteDialog}>
+        <DialogTitle>Delete User</DialogTitle>
+        <DialogContent>
+          <Typography>
+            Are you sure you want to delete the user <strong>{userToDelete?.firstName} {userToDelete?.lastName}</strong>?
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDeleteDialog}>Cancel</Button>
+          <Button onClick={handleDeleteUser} color="error">
+            Delete
+          </Button>
+        </DialogActions>
       </Dialog>
     </div>
   );

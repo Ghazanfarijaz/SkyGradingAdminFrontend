@@ -99,6 +99,21 @@ const apiSlice = createApi({
       }),
       invalidatesTags: ["User"], // Invalidate the User tag after a successful update
     }),
+    deleteCard: builder.mutation({
+      query: (cardNumber) => ({
+        url: `/cards/delete/${cardNumber}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Cards"], // Invalidate the "Cards" tag to refetch the list
+    }),
+    deleteUser: builder.mutation({
+      query: (id) => ({
+        url: `/users/users/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["User"], // Invalidate the "User" tag to refetch the list
+    }),
+
   }),
 });
 
@@ -114,6 +129,8 @@ export const {
   useGetAllCardsQuery,
   useUpdateCardMutation,
   useUpdateUserMutation,
+  useDeleteCardMutation,
+  useDeleteUserMutation,
 } = apiSlice;
 
 export default apiSlice;
