@@ -2440,6 +2440,8 @@ function Cards() {
                 {!isMobile && <TableCell sx={{ color: "white", fontWeight: "bold" }}>Certification No.</TableCell>}
                 {!isMobile && <TableCell sx={{ color: "white", fontWeight: "bold" }}>Address</TableCell>}
                 <TableCell sx={{ color: "white", fontWeight: "bold" }}>Terms Agreed</TableCell>
+                <TableCell sx={{ color: "white", fontWeight: "bold" }}>Holographic</TableCell>
+                
                 <TableCell sx={{ color: "white", fontWeight: "bold" }}>Rarity</TableCell>
                 <TableCell sx={{ color: "white", fontWeight: "bold" }}>Image</TableCell>
                 {!isMobile && <TableCell sx={{ color: "white", fontWeight: "bold" }}>Grade</TableCell>}
@@ -2473,6 +2475,13 @@ function Cards() {
                         size="small"
                       />
                     </TableCell>
+                    <TableCell>
+                      <Chip
+                        label={card.holographic ? "Holographic" : "Recerse Holographic"}
+                        color={card.holographic ? "success" : "error"}
+                        size="small"
+                      />
+                    </TableCell>                    
                     <TableCell>
                       <Chip
                         label={card.rarity}
@@ -2578,13 +2587,21 @@ function Cards() {
             { name: "language", type: "text" },
             { name: "label", type: "text" },
             { name: "certificationNumber", type: "text" },
-            { name: "address", type: "text" },
+            { name: "address", type: "text" },  
             {
-              name: "termsAgreed",
+              name: "termsAgreed",                         
               type: "menu",
               options: [
                 { value: true, label: "True" },
                 { value: false, label: "False" },
+              ],
+            },
+            {
+              name: "holographic",                        
+              type: "menu",
+              options: [
+                { value: true, label: "Holographic" },
+                { value: false, label: "Recerse Holographic" },
               ],
             },
             {
@@ -2747,11 +2764,19 @@ function Cards() {
             { name: "certificationNumber", type: "text" },
             { name: "address", type: "text" },
             {
-              name: "termsAgreed",
+              name: "termsAgreed",                         
               type: "menu",
               options: [
                 { value: true, label: "True" },
                 { value: false, label: "False" },
+              ],
+            },
+            {
+              name: "holographic",                        
+              type: "menu",
+              options: [
+                { value: true, label: "Holographic" },
+                { value: false, label: "Recerse Holographic" },
               ],
             },
             {
