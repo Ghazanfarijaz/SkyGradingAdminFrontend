@@ -2247,13 +2247,13 @@ function Cards() {
     );
   }
 
-  if (!cards || cards.length === 0) {
-    return (
-      <Alert severity="info" sx={{ margin: "24px" }}>
-        No cards found.
-      </Alert>
-    );
-  }
+  // if (!cards || cards.length === 0) {
+  //   return (
+  //     <Alert severity="info" sx={{ margin: "24px" }}>
+  //       No cards found.
+  //     </Alert>
+  //   );
+  // }
 
   // Handle pagination change
   const handleChangePage = (event, newPage) => {
@@ -2410,7 +2410,7 @@ function Cards() {
   };
 
   return (
-    <div style={{ padding: "24px" }}>
+    <div style={{ padding: "24px" }}>      
       <Typography variant="h4" gutterBottom sx={{ fontWeight: "bold", color: "primary.main" }}>
         Cards Management
       </Typography>
@@ -2425,6 +2425,8 @@ function Cards() {
       >
         Add Card
       </Button>
+
+
 
       <Paper elevation={3} sx={{ borderRadius: "12px", overflow: "hidden" }}>
         <TableContainer sx={{ maxWidth: "100%", overflowX: "auto" }}>
