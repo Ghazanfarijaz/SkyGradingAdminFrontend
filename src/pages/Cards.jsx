@@ -2200,6 +2200,7 @@ function Cards() {
   const [selectedCard, setSelectedCard] = useState(null);
   const [newCard, setNewCard] = useState({});
   const [imageFile, setImageFile] = useState(null);
+  const [image2File, setImage2File] = useState(null);
   const [openQRModal, setOpenQRModal] = useState(false);
   const [qrCardNumber, setQRCardNumber] = useState("");
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
@@ -2277,6 +2278,7 @@ function Cards() {
     setOpenEditModal(false);
     setSelectedCard(null);
     setImageFile(null);
+     setImage2File(null);
   };
 
   // Handle add modal open
@@ -2290,6 +2292,7 @@ function Cards() {
     setOpenAddModal(false);
     setNewCard({});
     setImageFile(null);
+    setImage2File(null);
   };
 
   // Handle form field changes for Edit Modal
@@ -2314,11 +2317,23 @@ function Cards() {
     setImageFile(file);
   };
 
+    // Handle image2 file selection for Edit Modal
+    const handleImage2Change = (event) => {
+      const file = event.target.files[0];
+      setImage2File(file);
+    };
+
   // Handle image file selection for Add Modal
   const handleAddImageChange = (event) => {
     const file = event.target.files[0];
     setImageFile(file);
   };
+
+    // Handle image2 file selection for Add Modal
+    const handleAddImage2Change = (event) => {
+      const file = event.target.files[0];
+      setImage2File(file);
+    };
 
   // Upload image to Cloudinary
   const uploadImageToCloudinary = async (file) => {
@@ -2328,7 +2343,7 @@ function Cards() {
 
     try {
       const response = await fetch(
-        "https://api.cloudinary.com/v1_1/your-cloud-name/image/upload", // Replace with your Cloudinary cloud name
+        "https://api.cloudinary.com/v1_1/dnfc9g33c/image/upload", // Replace with your Cloudinary cloud name
         {
           method: "POST",
           body: formData,
@@ -2342,6 +2357,28 @@ function Cards() {
     }
   };
 
+    // Upload image2 to Cloudinary
+    const uploadImage2ToCloudinary = async (file) => {
+      const formData2 = new FormData();
+      formData2.append("file", file);
+      formData2.append("upload_preset", "ml_default"); // Replace with your Cloudinary upload preset
+  
+      try {
+        const response = await fetch(
+          "https://api.cloudinary.com/v1_1/dnfc9g33c/image/upload", // Replace with your Cloudinary cloud name
+          {
+            method: "POST",
+            body: formData2,
+          }
+        );
+        const data = await response.json();
+        return data.secure_url;
+      } catch (error) {
+        console.error("Error uploading image2 to Cloudinary:", error);
+        return null;
+      }
+    };
+
   // Handle saving changes to the card
   const handleSave = async () => {
     if (!selectedCard) return;
@@ -2350,6 +2387,13 @@ function Cards() {
       const imageUrl = await uploadImageToCloudinary(imageFile);
       if (imageUrl) {
         selectedCard.image = imageUrl;
+      }
+    }
+
+    if (image2File) {
+      const image2Url = await uploadImage2ToCloudinary(image2File);
+      if (image2Url) {
+        selectedCard.image2 = image2Url;
       }
     }
 
@@ -2364,12 +2408,21 @@ function Cards() {
 
   // Handle saving new card
   const handleAddCard = async () => {
+   
     if (!newCard) return;
-
+    console.log("here is the new card" , newCard);
     if (imageFile) {
       const imageUrl = await uploadImageToCloudinary(imageFile);
+      console.log("here is the new imageUrl" , imageUrl);
       if (imageUrl) {
         newCard.image = imageUrl;
+      } 
+    }
+
+    if (image2File) {
+      const image2Url = await uploadImage2ToCloudinary(image2File);
+      if (image2Url) {
+        newCard.image2 = image2Url;
       }
     }
 
@@ -2445,7 +2498,8 @@ function Cards() {
                 <TableCell sx={{ color: "white", fontWeight: "bold" }}>Holographic</TableCell>
                 
                 <TableCell sx={{ color: "white", fontWeight: "bold" }}>Rarity</TableCell>
-                <TableCell sx={{ color: "white", fontWeight: "bold" }}>Image</TableCell>
+                <TableCell sx={{ color: "white", fontWeight: "bold" }}>Front Image</TableCell>
+                <TableCell sx={{ color: "white", fontWeight: "bold" }}>Backside Image</TableCell>
                 {!isMobile && <TableCell sx={{ color: "white", fontWeight: "bold" }}>Grade</TableCell>}
                 {!isMobile && <TableCell sx={{ color: "white", fontWeight: "bold" }}>Sub Grade</TableCell>}
                 <TableCell sx={{ color: "white", fontWeight: "bold" }}>Tracking Status</TableCell>
@@ -2497,9 +2551,34 @@ function Cards() {
                         size="small"
                       />
                     </TableCell>
+
                     <TableCell>
                       <Avatar src={card.image} alt="Card" sx={{ width: 50, height: 50 }} />
                     </TableCell>
+                    <TableCell>
+                      <Avatar src={card.image2} alt="Card" sx={{ width: 50, height: 50 }} />
+                    </TableCell>
+
+{/* <TableCell>
+  <div className="relative w-[50px] h-[50px] perspective-1000 group">
+    <div className="absolute w-full h-full transition-transform duration-500 transform-style-preserve-3d group-hover:rotate-y-180">
+  
+      <div className="absolute w-full h-full backface-hidden">
+        <Avatar src={card.image} alt="Front" sx={{ width: 50, height: 50 }} />
+      </div>
+
+      <div className="absolute w-full h-full rotate-y-180 backface-hidden">
+        <Avatar src={card.image2} alt="Back" sx={{ width: 50, height: 50 }} />
+      </div>
+    </div>
+  </div>
+</TableCell> */}
+
+
+
+
+
+
                     {!isMobile && <TableCell>{card.grade}</TableCell>}
                     {!isMobile && <TableCell>{Object.values(card.subgrade).join(", ")}</TableCell>}
                     <TableCell>
@@ -2546,6 +2625,8 @@ function Cards() {
                   </TableRow>
                 ))}
             </TableBody>
+
+            
           </Table>
         </TableContainer>
         <TablePagination
@@ -2616,6 +2697,7 @@ function Cards() {
               ],
             },
             { name: "image", type: "text" },
+              { name: "image2", type: "text" },
             { name: "grade", type: "numberRange", range: { min: 1, max: 10 } },
             {
               name: "trackingStatus",
@@ -2714,6 +2796,17 @@ function Cards() {
             style={{ marginBottom: "1rem" }}
           />
 
+            {/* Image2 Upload Field */}
+            <Typography variant="h6" gutterBottom style={{ marginTop: "1rem" }}>
+            Upload Backside Image
+          </Typography>
+          <input
+            type="file"
+            accept="image2/*"
+            onChange={handleImage2Change}
+            style={{ marginBottom: "1rem" }}
+          />
+
           {/* Subgrade Fields */}
           <Typography variant="h6" gutterBottom style={{ marginTop: "1rem" }}>
             Subgrade
@@ -2791,6 +2884,7 @@ function Cards() {
               ],
             },
             { name: "image", type: "text" },
+            { name: "image2", type: "text" },
             { name: "grade", type: "numberRange", range: { min: 1, max: 10 } },
             {
               name: "trackingStatus",
@@ -2886,6 +2980,17 @@ function Cards() {
             type="file"
             accept="image/*"
             onChange={handleAddImageChange}
+            style={{ marginBottom: "1rem" }}
+          />
+
+          {/* Image Upload Field */}
+          <Typography variant="h6" gutterBottom style={{ marginTop: "1rem" }}>
+            Upload Backside Image
+          </Typography>
+          <input
+            type="file"
+            accept="image2/*"
+            onChange={handleAddImage2Change}
             style={{ marginBottom: "1rem" }}
           />
 
