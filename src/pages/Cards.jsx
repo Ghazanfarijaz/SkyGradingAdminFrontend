@@ -2681,7 +2681,7 @@ function Cards() {
             },
             {
               name: "holographic",                        
-              type: "menu",
+              type: "text",
               options: [
                 { value: true, label: "Holographic" },
                 { value: false, label: "Recerse Holographic" },
@@ -2689,12 +2689,12 @@ function Cards() {
             },
             {
               name: "rarity",
-              type: "menu",
-              options: [
-                { value: "rare", label: "Rare" },
-                { value: "common", label: "Common" },
-                { value: "normal", label: "Normal" },
-              ],
+              type: "text"
+              // options: [
+              //   { value: "rare", label: "Rare" },
+              //   { value: "common", label: "Common" },
+              //   { value: "normal", label: "Normal" },
+              // ],
             },
             { name: "image", type: "text" },
               { name: "image2", type: "text" },
@@ -2876,12 +2876,12 @@ function Cards() {
             },
             {
               name: "rarity",
-              type: "menu",
-              options: [
-                { value: "rare", label: "Rare" },
-                { value: "common", label: "Common" },
-                { value: "normal", label: "Normal" },
-              ],
+              type: "text"
+              // options: [
+              //   { value: "rare", label: "Rare" },
+              //   { value: "common", label: "Common" },
+              //   { value: "normal", label: "Normal" },
+              // ],
             },
             { name: "image", type: "text" },
             { name: "image2", type: "text" },
