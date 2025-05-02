@@ -70,9 +70,7 @@ function CardsTable({
 
   return (
     <Paper elevation={3} sx={{ borderRadius: "12px", overflow: "hidden" }}>
-      <TableContainer
-        sx={{ maxHeight: "calc(100vh - 220px)", overflow: "auto" }}
-      >
+      <TableContainer sx={{ maxHeight: "calc(100vh)", overflow: "auto" }}>
         <Table stickyHeader aria-label="cards table">
           <TableHead>
             <TableRow sx={{ backgroundColor: theme.palette.primary.main }}>
