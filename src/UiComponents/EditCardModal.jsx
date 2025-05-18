@@ -53,12 +53,12 @@ const fieldDefinitions = [
   {
     name: "rarity",
     label: "Rarity",
-    type: "select",
-    options: [
-      { value: "rare", label: "Rare" },
-      { value: "common", label: "Common" },
-      { value: "normal", label: "Normal" },
-    ],
+    type: "text",
+    // options: [
+    //   { value: "rare", label: "Rare" },
+    //   { value: "common", label: "Common" },
+    //   { value: "normal", label: "Normal" },
+    // ],
   },
   {
     name: "trackingStatus",
