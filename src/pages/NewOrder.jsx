@@ -162,7 +162,7 @@ function NewOrder() {
           variant="h4"
           sx={{ fontWeight: "bold", color: "primary.main" }}
         >
-          Cards Management
+          Cards Management of New Orders
         </Typography>
 
         <Box>
