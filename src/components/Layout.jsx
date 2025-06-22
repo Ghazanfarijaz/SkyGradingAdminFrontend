@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Outlet, useNavigate, useLocation } from 'react-router-dom';
+import { useState } from "react";
+import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import {
   AppBar,
   Box,
@@ -13,7 +13,7 @@ import {
   Typography,
   useMediaQuery,
   useTheme,
-} from '@mui/material';
+} from "@mui/material";
 import {
   Menu as MenuIcon,
   Dashboard as DashboardIcon,
@@ -21,25 +21,27 @@ import {
   Person as PersonIcon,
   ExitToApp as ExitToAppIcon,
   AccountBalanceWallet as CreditCardIcon,
-} from '@mui/icons-material';
+  ShoppingCart as ShoppingCartIcon,
+} from "@mui/icons-material";
 
-import { useAuth } from './../authentication/authProvider'; // Adjust path to your AuthProvider
+import { useAuth } from "./../authentication/authProvider"; // Adjust path to your AuthProvider
 
 const drawerWidth = 240;
 
 function Layout() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const navigate = useNavigate();
   const location = useLocation();
 
-  const { logout } = useAuth();  // Use the login function from AuthProvider
+  const { logout } = useAuth(); // Use the login function from AuthProvider
 
   const menuItems = [
-    { text: 'Dashboard', icon: <DashboardIcon />, path: '/' },
-    { text: 'Cards', icon: <CreditCardIcon />, path: '/cards' },
-    { text: 'Users', icon: <PeopleIcon />, path: '/users' },
+    { text: "Dashboard", icon: <DashboardIcon />, path: "/" },
+    { text: "Cards", icon: <CreditCardIcon />, path: "/cards" },
+    { text: "Users", icon: <PeopleIcon />, path: "/users" },
+    { text: "New Order", icon: <ShoppingCartIcon />, path: "/new-order" },
     // { text: 'Profile', icon: <PersonIcon />, path: '/profile' },
   ];
 
@@ -59,10 +61,10 @@ function Layout() {
     // localStorage.removeItem("currentUser");
     // localStorage.removeItem("authToken");
     logout();
-  
+
     // You can also reset any context or state managing authentication
     // setIsAuthenticated(false);
-  
+
     // Navigate to the sign-in page
     navigate("/signin");
   };
@@ -83,7 +85,9 @@ function Layout() {
           </ListItem>
         ))}
         <ListItem button onClick={handleSignOut}>
-          <ListItemIcon><ExitToAppIcon /></ListItemIcon>
+          <ListItemIcon>
+            <ExitToAppIcon />
+          </ListItemIcon>
           <ListItemText primary="Sign Out" />
         </ListItem>
       </List>
@@ -91,7 +95,7 @@ function Layout() {
   );
 
   return (
-    <Box sx={{ display: 'flex' }}>
+    <Box sx={{ display: "flex" }}>
       <AppBar
         position="fixed"
         sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
@@ -101,7 +105,7 @@ function Layout() {
             color="inherit"
             edge="start"
             onClick={handleDrawerToggle}
-            sx={{ mr: 2, display: { sm: 'none' } }}
+            sx={{ mr: 2, display: { sm: "none" } }}
           >
             <MenuIcon />
           </IconButton>
@@ -115,15 +119,15 @@ function Layout() {
         sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
       >
         <Drawer
-          variant={isMobile ? 'temporary' : 'permanent'}
+          variant={isMobile ? "temporary" : "permanent"}
           open={mobileOpen}
           onClose={handleDrawerToggle}
           ModalProps={{
             keepMounted: true,
           }}
           sx={{
-            '& .MuiDrawer-paper': {
-              boxSizing: 'border-box',
+            "& .MuiDrawer-paper": {
+              boxSizing: "border-box",
               width: drawerWidth,
             },
           }}
@@ -137,7 +141,7 @@ function Layout() {
           flexGrow: 1,
           p: 3,
           width: { sm: `calc(100% - ${drawerWidth}px)` },
-          mt: '64px',
+          mt: "64px",
         }}
       >
         <Outlet />

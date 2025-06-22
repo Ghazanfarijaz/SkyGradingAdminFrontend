@@ -114,6 +114,11 @@ const apiSlice = createApi({
       invalidatesTags: ["User"], // Invalidate the "User" tag to refetch the list
     }),
 
+    // Add this new endpoint
+    getNewOrders: builder.query({
+      query: () => "/cards/orders/new",
+      providesTags: ["Cards"], // You can use the same "Cards" tag or create a new one
+    }),
   }),
 });
 
@@ -131,6 +136,7 @@ export const {
   useUpdateUserMutation,
   useDeleteCardMutation,
   useDeleteUserMutation,
+  useGetNewOrdersQuery,
 } = apiSlice;
 
 export default apiSlice;

@@ -14,7 +14,7 @@ import Profile from "./pages/Profile";
 import { AuthProvider, useAuth } from "./authentication/authProvider";
 import PrivateRoute from "./authentication/PrivateRoute";
 import Cards from "./pages/Cards";
-import Notifications from "./pages/Notifications";
+import NewOrder from "./pages/NewOrder";
 
 const theme = createTheme({
   palette: {
@@ -43,7 +43,7 @@ function App() {
                 <Route index element={<Dashboard />} />
                 <Route path="cards" element={<Cards />} />
                 <Route path="users" element={<Users />} />
-                <Route path="profile" element={<Notifications />} />
+                <Route path="new-order" element={<NewOrder />} />
                 <Route path="profile" element={<Profile />} />
               </Route>
             </Route>
