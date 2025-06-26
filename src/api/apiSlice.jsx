@@ -81,8 +81,8 @@ const apiSlice = createApi({
     }),
     // Update card details
     updateCard: builder.mutation({
-      query: ({ cardNumber, cardData }) => ({
-        url: `/cards/updateall/${cardNumber}`,
+      query: ({ id, cardData }) => ({
+        url: `/cards/updateall/${id}`,
         method: "PUT",
         body: cardData,
       }),

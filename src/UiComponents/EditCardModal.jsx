@@ -23,7 +23,6 @@ const fieldDefinitions = [
     name: "cardNumber",
     label: "Certification Number",
     type: "text",
-    disabled: true,
   },
   { name: "name", label: "Name", type: "text", required: true },
   { name: "set", label: "Set", type: "text" },
@@ -150,7 +149,7 @@ function EditCardModal({ open, card, onClose, onSave }) {
       }
 
       await onSave({
-        cardNumber: updatedCard.cardNumber,
+        id: updatedCard.id,
         cardData: updatedCard,
       });
 
