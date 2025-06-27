@@ -1,7 +1,5 @@
-import { Grid, Paper, Typography } from '@mui/material';
+import { Grid, Paper, Typography } from "@mui/material";
 import {
-  LineChart,
-  Line,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -12,26 +10,36 @@ import {
   PieChart,
   Pie,
   Cell,
-} from 'recharts';
-import { useGetAllUsersQuery, useGetAllCardsQuery } from '../api/apiSlice'; // Import the necessary hooks
+} from "recharts";
+import { useGetAllUsersQuery, useGetAllCardsQuery } from "../api/apiSlice"; // Import the necessary hooks
 
 // Custom colors for the pie chart
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
+const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
 
 function Dashboard() {
   // Fetch users and cards data
-  const { data: users = [], isLoading: isUsersLoading, error: usersError } = useGetAllUsersQuery();
-  const { data: cards = [], isLoading: isCardsLoading, error: cardsError } = useGetAllCardsQuery();
+  const {
+    data: users = [],
+    isLoading: isUsersLoading,
+    error: usersError,
+  } = useGetAllUsersQuery();
+  const {
+    data: cards = [],
+    isLoading: isCardsLoading,
+    error: cardsError,
+  } = useGetAllCardsQuery();
 
   // Calculate metrics
   const totalUsers = users.length;
-  const activeUsers = users.filter((user) => user.status === 'active').length;
+  const activeUsers = users.filter((user) => user.status === "active").length;
   const totalCards = cards.length;
-  const pendingCards = cards.filter((card) => card.trackingStatus === 'pending').length;
+  const pendingCards = cards.filter(
+    (card) => card.trackingStatus === "pending"
+  ).length;
 
   // Prepare data for the graph (e.g., card grades distribution)
   const gradeDistribution = cards.reduce((acc, card) => {
-    const grade = card.grade || 'No Grade';
+    const grade = card.grade || "No Grade";
     acc[grade] = (acc[grade] || 0) + 1;
     return acc;
   }, {});
@@ -43,7 +51,7 @@ function Dashboard() {
 
   // Prepare data for the graph (e.g., card rarity distribution)
   const rarityDistribution = cards.reduce((acc, card) => {
-    const rarity = card.rarity || 'No Rarity';
+    const rarity = card.rarity || "No Rarity";
     acc[rarity] = (acc[rarity] || 0) + 1;
     return acc;
   }, {});
@@ -55,10 +63,10 @@ function Dashboard() {
 
   // Metrics to display
   const metrics = [
-    { title: 'Total Users', value: totalUsers },
-    { title: 'Active Users', value: activeUsers },
-    { title: 'Total Cards', value: totalCards },
-    { title: 'Pending Cards', value: pendingCards },
+    { title: "Total Users", value: totalUsers },
+    { title: "Active Users", value: activeUsers },
+    { title: "Total Cards", value: totalCards },
+    { title: "Pending Cards", value: pendingCards },
   ];
 
   // Handle loading and error states
@@ -67,7 +75,11 @@ function Dashboard() {
   }
 
   if (usersError || cardsError) {
-    return <Typography variant="h6" color="error">Error fetching dashboard data</Typography>;
+    return (
+      <Typography variant="h6" color="error">
+        Error fetching dashboard data
+      </Typography>
+    );
   }
 
   return (
@@ -83,9 +95,9 @@ function Dashboard() {
             <Paper
               sx={{
                 p: 2,
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
               }}
             >
               <Typography variant="h6" gutterBottom>
@@ -136,7 +148,10 @@ function Dashboard() {
                     label
                   >
                     {rarityData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={COLORS[index % COLORS.length]}
+                      />
                     ))}
                   </Pie>
                   <Tooltip />
